@@ -62,3 +62,23 @@ kubectl create configmap django-app-config --from-env-file=django-app-config.pro
 ```bash
 kubectl apply -f kubernetes/django-app-deployment.yml
 ```
+
+## Настройка Ingress
+Установите расширение для `minikube`:
+
+```bash
+minikube addons enable ingress
+```
+
+Запустите манифест:
+
+```bash
+kubectl apply -f kubernetes/ingress.yml
+```
+
+Добавьте в файл /etc/host строчку:
+
+```bash
+11.22.33.44 star-burger.test
+```
+Где 11.22.33.44 - ip-адрес кластера.
