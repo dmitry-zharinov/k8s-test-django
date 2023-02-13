@@ -87,3 +87,23 @@ kubectl apply -f kubernetes/ingress.yml
 11.22.33.44 star-burger.test
 ```
 Где 11.22.33.44 - ip-адрес кластера.
+
+## Настройка удаления сессий
+
+Задать регулярность удаления пользовательских сессий можно в файле `django-app-clearsessions-cronjob.yml`:
+
+```yaml
+schedule: "0 0 1 * *"
+```
+
+После настройки времени необходимо запустить команду в работу:
+
+```bash
+kubectl apply --filename kubernetes/django-app-clear-sessions-cronjob.yml
+```
+
+Для проверки:
+
+```bash
+kubectl create job --from=cronjob/django-app-clearsessions-cronjob test-clearsession-job
+```
