@@ -32,3 +32,33 @@ $ docker-compose run web ./manage.py createsuperuser
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+
+## Запуск в кластере Kubernetes используя Minikube
+
+- Установите [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/).
+- Установите и запустите [minikube](https://minikube.sigs.k8s.io/docs/):
+- Создайте образ Django-приложения в кластере с помощью команды:
+
+```bash
+minikube image build -t django_app backend_main_django/
+```
+
+- Создайте файл конфигурации `django-app-config.properties` и задайте в нём переменные окружения. Пример:
+```bash
+SECRET_KEY=secret
+DATABASE_URL=postgres://user:password@11.22.33.44:1234/dbname
+ALLOWED_HOSTS=11.22.33.44:1234
+DEBUG=true
+```
+
+- Создайте `ConfigMap` из этого файла с помощью команды:
+  
+```bash
+kubectl create configmap django-app-config --from-env-file=django-app-config.properties
+```
+
+- Запустите деплой:
+
+```bash
+kubectl apply -f kubernetes/django-app-deployment.yml
+```
