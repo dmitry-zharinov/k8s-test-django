@@ -43,18 +43,23 @@ $ docker-compose run web ./manage.py createsuperuser
 minikube image build -t django_app backend_main_django/
 ```
 
-- Создайте файл конфигурации `django-app-config.properties` и задайте в нём переменные окружения. Пример:
-```bash
-SECRET_KEY=secret
-DATABASE_URL=postgres://user:password@11.22.33.44:1234/dbname
-ALLOWED_HOSTS=11.22.33.44:1234
-DEBUG=true
+- Заполните переменные окружения разделе `data` файла конфигурации `kubernetes/django-app-config.yml`:
+```yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-app-config
+data:
+  ALLOWED_HOSTS: 127.0.0.1, localhost, 123.456.78.9
+  DATABASE_URL: postgres://username:password@host:5432/dbname
+  DEBUG: 'False'
+  SECRET_KEY: secret-key
 ```
 
 - Создайте `ConfigMap` из этого файла с помощью команды:
   
 ```bash
-kubectl create configmap django-app-config --from-env-file=django-app-config.properties
+kubectl apply --filename kubernetes/django-app-config.yml
 ```
 
 - Запустите деплой:
